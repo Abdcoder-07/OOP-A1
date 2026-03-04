@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iomanip> // For formatting prices
 
 // Include all the class headers
 #include "Engine.h"
@@ -15,9 +14,6 @@
 using namespace std;
 
 int main() {
-    // This stops prices from printing in scientific notation (like 4.5e+006)
-    cout << fixed << setprecision(0); 
-
     cout << "==========================================\n";
     cout << "       Welcome to Abdullah's Garage!      \n";
     cout << "==========================================\n\n";
