@@ -1,4 +1,7 @@
 #include <iostream>
+#include <iomanip> // For formatting prices
+
+// Include all the class headers
 #include "Engine.h"
 #include "Registration.h"
 #include "Vehicle.h"
@@ -12,47 +15,92 @@
 using namespace std;
 
 int main() {
-    cout << "Welcome to Abdullah's Garage!\n";
+    // This stops prices from printing in scientific notation (like 4.5e+006)
+    cout << fixed << setprecision(0); 
 
-    // 1. Setup Marketplace
+    cout << "==========================================\n";
+    cout << "       Welcome to Abdullah's Garage!      \n";
+    cout << "==========================================\n\n";
+
+    // 1. Setup the Marketplace
     Marketplace abdullahWheels("AbdullahWheels");
 
-    // 2. Setup Actors
-    Seller seller1(101, "Jhangirmotors", "jhangir@jw.com", "Jhangir Dealership");
-    Buyer buyer1("Anas", "Anas@gmail.com", 5000000.0);
+    // 2. Create Users
+    Seller seller1(101, "AliMotors", "ali@motors.com", "Ali Dealership");
+    Buyer buyer1("Ahmed", "ahmed@mail.com", 5000000.0);
     Admin admin1("A001", "SystemAdmin", 3);
 
-    // 3. Setup Vehicles 
+    // Show static member working
+    cout << "--- SYSTEM INFO ---\n";
+    cout << "Total Users Registered: " << User::getTotalUsers() << "\n\n";
+
+    // 3. Create Vehicles (Composition: Vehicle has Engine and Registration)
     Engine e1("ENG-9988", 1800, 140, "Hybrid");
-    Registration r1("Lahore", 2021, "LEA-123", true, "JhangirMotors");
+    Registration r1("Lahore", 2021, "LEA-123", true, "AliMotors");
     Vehicle v1("VIN12345678", "Toyota", "Corolla", 2021, 15000, e1, r1);
 
     Engine e2("ENG-5544", 1500, 118, "Petrol");
     Registration r2("Karachi", 2018, "KHI-999", true, "AliMotors");
     Vehicle v2("VIN87654321", "Honda", "Civic", 2018, 45000, e2, r2);
 
-    // 4. Create Listings 
+    // 4. Create Listings (Aggregation: Listing points to Vehicle and Seller)
     Listing l1(4500000.0, &v1, &seller1);
     Listing l2(3200000.0, &v2, &seller1);
 
-    // 5. Admin Approves and System Adds Listings
+    cout << "Total Listings Drafted: " << Listing::getTotalListings() << "\n\n";
+
+    cout << "==========================================\n";
+    cout << "          ADMIN APPROVING ADS             \n";
+    cout << "==========================================\n";
     admin1.approveListing(l1);
     abdullahWheels.addListing(&l1);
+    
+    admin1.approveListing(l2);
     abdullahWheels.addListing(&l2);
+    cout << "\n";
 
-    // 6. Search and Filter Vehicles
+    cout << "==========================================\n";
+    cout << "          BUYER SEARCH & FILTER           \n";
+    cout << "==========================================\n";
+    
+    // Test the search feature
+    cout << "Searching for 'Toyota':";
     abdullahWheels.searchByBrand("Toyota");
+
+    // Test the price filter
+    cout << "\nFiltering cars under PKR 4,000,000:";
     abdullahWheels.filterByPrice(4000000.0);
+    cout << "\n";
 
-    // 7. Buyer saves favorites and messages seller
+    cout << "==========================================\n";
+    cout << "          FAVORITES & MESSAGES            \n";
+    cout << "==========================================\n";
+    
+    // Buyer saves a car
     buyer1.saveFavorite(&l1);
+    cout << "\n";
     buyer1.viewFavorites();
+    cout << "\n";
 
-    Message inquiry("Anas", "JhangirMotors", "Is the Corolla price negotiable?", "10:30 AM");
+    // Buyer sends a message
+    cout << "--- New Message Received ---\n";
+    Message inquiry("Ahmed", "AliMotors", "Is the Corolla price negotiable?", "10:30 AM");
     inquiry.displayMessage();
+    cout << "\n";
 
-    // 8. Admin removes a listing
+    cout << "==========================================\n";
+    cout << "          DELETING A LISTING              \n";
+    cout << "==========================================\n";
+    
+    // Admin removes a car and we test the filter again to prove it's gone
     admin1.removeListing(l2);
+    cout << "\nChecking if it was removed (Searching under 4,000,000 again):";
+    abdullahWheels.filterByPrice(4000000.0); // Honda Civic should not show up now!
+    cout << "\n";
+
+    cout << "==========================================\n";
+    cout << "               SYSTEM EXIT                \n";
+    cout << "==========================================\n";
 
     return 0;
 }
